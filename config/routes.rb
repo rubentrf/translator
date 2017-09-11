@@ -1,4 +1,9 @@
+Rails.application.routes.draw do
+  mount Translator::Engine => "/translator" if Translator.mount
+end
+
 Translator::Engine.routes.draw do
-  post '/translate/:to_lang_code', to: 'translations#translate'
-  post '/translate/:from_lang_code/:to_lang_code', to: 'translations#translate'
+  post '/translate', to: 'translations#translate'
+  post '/translate/:from', to: 'translations#translate'
+  post '/translate/:from/:to', to: 'translations#translate'
 end

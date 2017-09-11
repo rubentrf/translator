@@ -2,16 +2,14 @@ module Translator
   class TranslationsController < ApplicationController
 
     def translate
-      render json: {translator.translate(params) }
+      render json: {text: translator.translate(params) }
     end
-
 
     protected
 
     def translator
-      @translator ||= Translator.new(controller: self)
+      @translator ||= Translator::Main.new(controller: self)
     end
-
 
     def verify_request_size
       if request.content_length > Translator.max_content_length
