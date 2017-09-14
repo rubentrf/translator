@@ -11,7 +11,15 @@ module Translator
     def translate(options ={})
       text = options[:text]
       from = options[:from]
-      to = options[:to]
+      if options[:to].present?
+        to = options[:to]
+      else
+        begin
+          to = @controller.send(Translator.user_lang_method)
+        rescue
+          to = nil
+        end
+      end
 
       Translator.callback.call(text, from, to)
     end

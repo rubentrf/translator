@@ -11,6 +11,9 @@ module Translator
   mattr_accessor :mount
   self.mount = true
 
+  mattr_accessor :user_lang_method
+  self.user_lang_method = ''
+
   def self.setup
     yield self
   end
