@@ -16,7 +16,7 @@ And add the javascript file in `app/assets/javascripts/application.js` after jQu
 ```
 
 Add translator initializer
-```
+```ruby
 module Translator
   setup do |c|
     c.user_lang_method = :current_language
