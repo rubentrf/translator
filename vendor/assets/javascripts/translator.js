@@ -14,7 +14,7 @@ function setupTranslatable(element){
 
 function createTranslateButton(element) {
   var btn = document.createElement("p");
-  btn.innerHTML = '<a>'+I18n.t("platform.translations.translate")+'</a>';
+  btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.translate-button") : "Show original")+'</a>';
   btn.className = 'translate-link';
   btn.addEventListener('click', function() { translate(element) });
   return btn;
@@ -49,7 +49,7 @@ function translateText(element, data) {
   translatedElement.classList.add("translated");
 
   var btn = document.createElement('p');
-  btn.innerHTML = '<a>'+I18n.t("platform.translations.show_original")+'</a>';
+  btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.original-button") : "Translate")+'</a>';
   btn.className = 'show-original-link';
   btn.addEventListener('click', function(e) {
     showOriginal(translatedElement, element)
