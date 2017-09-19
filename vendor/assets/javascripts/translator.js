@@ -1,28 +1,51 @@
 $.fn.translate = function() {
-   function setupTranslatable(element){
-      if (element.getElementsByClassName('translate-link').length == 0){
-        btn = createTranslateButton(element);
-        element.appendChild(btn);
-      }
-    };
 
-    function createTranslateButton(element) {
-      var btn = document.createElement("p");
-      btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.translate-button") : "Show original")+'</a>';
-      btn.className = 'translate-link';
-      btn.addEventListener('click', function() { translate(element) });
-      return btn;
+  function createTranslateWrapper(element){
+
+    var wrapper = document.createElement('div');
+    wrapper.classList.add("translatable-wrapper");
+    var element2 = element.cloneNode(true);
+    wrapper.appendChild(element2)
+
+    if (element.parentNode) {
+      element.parentNode.replaceChild(wrapper, element);
+      createTranslateButtons(wrapper, element2);
     }
+  };
 
-    function translate(element){
+  function createTranslateButtons(wrapper, element) {
+    var trans_btn = document.createElement("p");
+    trans_btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.translate-button") : "Show original")+'</a>';
+    trans_btn.className = 'translate-link';
+    trans_btn.addEventListener('click', function() { translate(element); });
+
+    var orig_btn = document.createElement('p');
+    orig_btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.original-button") : "Translate")+'</a>';
+    orig_btn.className = 'show-original-link';
+    orig_btn.style.display = 'none';
+    orig_btn.addEventListener('click', function(e) { showOriginal(element);});
+
+    wrapper.appendChild(trans_btn)
+    wrapper.appendChild(orig_btn);
+  };
+
+  function translate(element){
+    if (element.classList.contains('translatable-group')){
+      var child_elements = element.getElementsByClassName('translatable-group-item')
+
+      for (var i=0, item; item = child_elements[i]; i++) {
+        translate(item);
+      }
+    }
+    else {
       var translatedElements = element.parentElement.getElementsByClassName('translated');
       if (translatedElements.length > 0){
-        showOriginal(element,translatedElements[0]);
+        showTranslatedText(element);
       }
       else {
         var translatedData = getLocalData(element.innerHTML);
         if(translatedData){
-          translateText(element, translatedData );
+          translateText(element, translatedData);
         }
         else {
           $.ajax({
@@ -36,70 +59,69 @@ $.fn.translate = function() {
           })
         }
       }
-    };
+    }
+  };
 
-    function showOriginal(element, original){
-      element.style.display = 'none';
-      original.style.display = 'block';
-    };
+  function showTranslatedText(element) {
+    var wrapper = $(element.closest('.translatable-wrapper'));
+    var translated_elements = wrapper.find('.translatable-group-item.translated, .translatable.translated, .show-original-link');
+    var original_elements = wrapper.find('.translatable-group-item:not(.translated), .translatable:not(.translated), .translate-link');
+    translated_elements.css('display', 'block');
+    original_elements.css('display', 'none');
+  };
 
+  function showOriginal(element) {
+    var wrapper = $(element.closest('.translatable-wrapper'));
+    var translated_elements = wrapper.find('.translatable-group-item.translated, .translatable.translated, .show-original-link');
+    var original_elements = wrapper.find('.translatable-group-item:not(.translated), .translatable:not(.translated), .translate-link');
+    translated_elements.css('display', 'none');
+    original_elements.css('display', 'block');
+  };
 
-    function translateText(element, text) {
-      var translatedElement = element.cloneNode();
-      translatedElement.innerHTML = text;
-      translatedElement.classList.remove("translatable");
-      translatedElement.classList.add("translated");
+  function translateText(element, text) {
+    var translatedElement = element.cloneNode(true);
+    translatedElement.innerHTML = text;
+    translatedElement.classList.add("translated");
+    element.parentElement.insertBefore(translatedElement, element);
+    showTranslatedText(element);
+  };
 
-      var btn = document.createElement('p');
-      btn.innerHTML = '<a>'+(typeof(I18n) !== 'undefined' ? I18n.t("translator.original-button") : "Translate")+'</a>';
-      btn.className = 'show-original-link';
-      btn.addEventListener('click', function(e) {
-        showOriginal(translatedElement, element);
-      });
-
-      translatedElement.appendChild(btn);
-
-      element.parentElement.insertBefore(translatedElement, element);
-      element.style.display = 'none';
-    };
-
-    // Cache translations in localstorage
-    function hash(str){
-      var hash = 0;
-      if (str.length == 0) return hash;
-      for (i = 0; i < str.length; i++) {
-          char = str.charCodeAt(i);
-          hash = ((hash<<5)-hash)+char;
-          hash = hash & hash; // Convert to 32bit integer
+  // Cache translations in localstorage
+  function hash(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+      char = str.charCodeAt(i);
+      hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
       }
       return hash;
     };
 
-    function getLocalData(original){
-      return localStorage.getItem('trans_'+ hash(original));
-    };
+  function getLocalData(original){
+    return localStorage.getItem('trans_'+ hash(original));
+  };
 
-    function setLocalData(original, translated){
-      localStorage.setItem('trans_'+hash(original), translated);
-    };
+  function setLocalData(original, translated){
+    localStorage.setItem('trans_'+hash(original), translated);
+  };
   this.each(function(){
-    setupTranslatable(this);
+    createTranslateWrapper(this);
   });
 };
-
-
 
 var ready = function() {
   var enabled = typeof(window.ENABLE_TRANSLATOR) == "undefined" ? true : Boolean(window.ENABLE_TRANSLATOR);
   if(enabled) {
-    $(".translatable:not(:has(.translate-link))").translate();
+    $(".translatable").not($(".translatable-wrapper .translatable")).translate();
+    $(".translatable-group").not($(".translatable-wrapper .translatable-group")).translate();
 
     $('body').on('DOMNodeInserted', function() {
-      $(".translatable:not(:has(.translate-link))").translate();
+      $(".translatable").not($(".translatable-wrapper .translatable")).translate();
+      $(".translatable-group").not($(".translatable-wrapper .translatable-group")).translate();
     });
   }
 };
 
 $(document).ready(ready);
 $(document).on('turbolinks:load',ready);
-
