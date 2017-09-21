@@ -1,3 +1,4 @@
+
 $.fn.translate = function() {
 
   function createTranslateWrapper(element){
@@ -31,6 +32,7 @@ $.fn.translate = function() {
 
   function translate(element){
     if (element.classList.contains('translatable-group')){
+
       var child_elements = element.getElementsByClassName('translatable-group-item')
 
       for (var i=0, item; item = child_elements[i]; i++) {
@@ -38,7 +40,7 @@ $.fn.translate = function() {
       }
     }
     else {
-      var translatedElements = element.parentElement.getElementsByClassName('translated');
+      var translatedElements = element.parentElement.getElementsByClassName(element.classList.toString() + " translated");
       if (translatedElements.length > 0){
         showTranslatedText(element);
       }
@@ -66,7 +68,7 @@ $.fn.translate = function() {
     var wrapper = $(element.closest('.translatable-wrapper'));
     var translated_elements = wrapper.find('.translatable-group-item.translated, .translatable.translated, .show-original-link');
     var original_elements = wrapper.find('.translatable-group-item:not(.translated), .translatable:not(.translated), .translate-link');
-    translated_elements.css('display', 'block');
+    translated_elements.css('display', '');
     original_elements.css('display', 'none');
   };
 
@@ -75,7 +77,7 @@ $.fn.translate = function() {
     var translated_elements = wrapper.find('.translatable-group-item.translated, .translatable.translated, .show-original-link');
     var original_elements = wrapper.find('.translatable-group-item:not(.translated), .translatable:not(.translated), .translate-link');
     translated_elements.css('display', 'none');
-    original_elements.css('display', 'block');
+    original_elements.css('display', '');
   };
 
   function translateText(element, text) {
