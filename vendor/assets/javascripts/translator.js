@@ -1,16 +1,23 @@
 
-$.fn.translate = function() {
+$.fn.translate = function(reset = true) {
+  function createTranslateWrapper(element, reset){
+    var has_wrapper = element.parentNode.classList.contains("translatable-wrapper");
 
-  function createTranslateWrapper(element){
+    if(has_wrapper && reset){
+      wrapper = element.parentNode;
+      removeTranslateButtons(wrapper);
+      createTranslateButtons(wrapper, element);
+    }
+    else {
+      var wrapper = document.createElement('div');
+      wrapper.classList.add("translatable-wrapper");
+      var element2 = element.cloneNode(true);
+      wrapper.appendChild(element2)
 
-    var wrapper = document.createElement('div');
-    wrapper.classList.add("translatable-wrapper");
-    var element2 = element.cloneNode(true);
-    wrapper.appendChild(element2)
-
-    if (element.parentNode) {
-      element.parentNode.replaceChild(wrapper, element);
-      createTranslateButtons(wrapper, element2);
+      if (element.parentNode) {
+        element.parentNode.replaceChild(wrapper, element);
+        createTranslateButtons(wrapper, element2);
+      }
     }
   };
 
@@ -28,8 +35,14 @@ $.fn.translate = function() {
 
     var btn_bucket = $(wrapper).find(".translate-link-bucket")
     btn_bucket = btn_bucket.length ? btn_bucket.get(0) : wrapper;
-    btn_bucket.appendChild(trans_btn)
+    btn_bucket.appendChild(trans_btn);
     btn_bucket.appendChild(orig_btn);
+  };
+
+  function removeTranslateButtons(wrapper){
+    var btn_bucket = $(wrapper).find(".translate-link-bucket")[0];
+    $(btn_bucket || wrapper).find('.translate-link').remove();
+    $(btn_bucket || wrapper).find('.show-original-link').remove();
   };
 
   function translate(element){
@@ -109,8 +122,9 @@ $.fn.translate = function() {
   function setLocalData(original, translated){
     localStorage.setItem('trans_'+hash(original), translated);
   };
+
   this.each(function(){
-    createTranslateWrapper(this);
+    createTranslateWrapper(this, reset);
   });
 };
 
@@ -120,10 +134,10 @@ var ready = function() {
     $(".translatable").not($(".translatable-wrapper .translatable")).translate();
     $(".translatable-group").not($(".translatable-wrapper .translatable-group")).translate();
 
-    $('body').on('DOMNodeInserted', function() {
+    setInterval(function(){
       $(".translatable").not($(".translatable-wrapper .translatable")).translate();
       $(".translatable-group").not($(".translatable-wrapper .translatable-group")).translate();
-    });
+    }, 5000); // every 5 seconds
   }
 };
 
