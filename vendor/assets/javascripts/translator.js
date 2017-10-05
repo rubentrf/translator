@@ -40,9 +40,8 @@ $.fn.translate = function(reset = true) {
   };
 
   function removeTranslateButtons(wrapper){
-    var btn_bucket = $(wrapper).find(".translate-link-bucket")[0];
-    $(btn_bucket || wrapper).find('.translate-link').remove();
-    $(btn_bucket || wrapper).find('.show-original-link').remove();
+    $(wrapper).find('.translate-link').remove();
+    $(wrapper).find('.show-original-link').remove();
   };
 
   function translate(element){
