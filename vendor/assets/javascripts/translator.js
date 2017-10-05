@@ -1,5 +1,6 @@
+$.fn.translate = function(reset) {
+  var reset = reset == true;
 
-$.fn.translate = function(reset = true) {
   function createTranslateWrapper(element, reset){
     var has_wrapper = element.parentNode.classList.contains("translatable-wrapper");
 
