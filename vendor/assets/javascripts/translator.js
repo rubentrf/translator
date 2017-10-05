@@ -119,11 +119,11 @@ $.fn.translate = function(reset) {
     };
 
   function getLocalData(original){
-    return localStorage.getItem('trans_'+ hash(original));
+    return localStorage.getItem('trans_'+((typeof(I18n) !== 'undefined') ? I18n.locale : "")+hash(original));
   };
 
   function setLocalData(original, translated){
-    localStorage.setItem('trans_'+hash(original), translated);
+    localStorage.setItem('trans_'+((typeof(I18n) !== 'undefined') ? I18n.locale : "")+ hash(original), translated);
   };
 
   this.each(function(){
