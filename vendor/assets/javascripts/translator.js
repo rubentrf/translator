@@ -2,7 +2,7 @@ $.fn.translate = function(reset) {
   var reset = reset == true;
 
   function createTranslateWrapper(element, reset){
-    var has_wrapper = element.parentNode.classList.contains("translatable-wrapper");
+    var has_wrapper = (element.parentNode == null) ? false : element.parentNode.classList.contains("translatable-wrapper");
 
     if(has_wrapper && reset){
       wrapper = element.parentNode;
