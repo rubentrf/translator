@@ -23,21 +23,24 @@ $.fn.translate = function(reset) {
   };
 
   function createTranslateButtons(wrapper, element) {
-    var trans_btn = document.createElement("p");
-    trans_btn.innerHTML = '<a href="javascript:void(0)"><i class="fa fa-globe"></i> '+(typeof(I18n) !== 'undefined' ? I18n.t("translator.translate-button") : "Show original")+'</a>';
-    trans_btn.className = 'translate-link';
-    trans_btn.addEventListener('click', function() { translate(element); });
-
-    var orig_btn = document.createElement('p');
-    orig_btn.innerHTML = '<a href="javascript:void(0)"><i class="fa fa-globe"></i> '+(typeof(I18n) !== 'undefined' ? I18n.t("translator.original-button") : "Translate")+'</a>';
-    orig_btn.className = 'show-original-link';
-    orig_btn.style.display = 'none';
-    orig_btn.addEventListener('click', function(e) { showOriginal(element);});
-
     var btn_bucket = $(wrapper).find(".translate-link-bucket")
-    btn_bucket = btn_bucket.length ? btn_bucket.get(0) : wrapper;
-    btn_bucket.appendChild(trans_btn);
-    btn_bucket.appendChild(orig_btn);
+    btn_bucket = btn_bucket.length ? btn_bucket : $(wrapper);
+    var el = element;
+    btn_bucket.each(function(i){
+      var trans_btn = document.createElement("p");
+      trans_btn.innerHTML = '<a href="javascript:void(0)"><i class="fa fa-globe"></i> '+(typeof(I18n) !== 'undefined' ? I18n.t("translator.translate-button") : "Show original")+'</a>';
+      trans_btn.className = 'translate-link';
+      trans_btn.addEventListener('click', function() { translate(el); });
+
+      var orig_btn = document.createElement('p');
+      orig_btn.innerHTML = '<a href="javascript:void(0)"><i class="fa fa-globe"></i> '+(typeof(I18n) !== 'undefined' ? I18n.t("translator.original-button") : "Translate")+'</a>';
+      orig_btn.className = 'show-original-link';
+      orig_btn.style.display = 'none';
+      orig_btn.addEventListener('click', function(e) { showOriginal(el);});
+
+      btn_bucket[i].appendChild(trans_btn);
+      btn_bucket[i].appendChild(orig_btn);
+    });
   };
 
   function removeTranslateButtons(wrapper){
