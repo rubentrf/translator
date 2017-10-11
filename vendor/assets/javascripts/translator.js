@@ -127,7 +127,9 @@ $.fn.translate = function(reset) {
   };
 
   this.each(function(){
-    createTranslateWrapper(this, reset);
+    if(typeof(window.ENABLE_TRANSLATOR) == "undefined" ? true : Boolean(window.ENABLE_TRANSLATOR)){
+      createTranslateWrapper(this, reset);
+    }
   });
 };
 
