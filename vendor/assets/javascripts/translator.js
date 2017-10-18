@@ -138,6 +138,7 @@ var ready = function() {
   if(enabled) {
     $(".translatable").not($(".translatable-wrapper .translatable")).translate();
     $(".translatable-group").not($(".translatable-wrapper .translatable-group")).translate();
+    document.getElementsByTagName('body')[0].classList.add("with-translated");
 
     setInterval(function(){
       $(".translatable").not($(".translatable-wrapper .translatable")).translate();
